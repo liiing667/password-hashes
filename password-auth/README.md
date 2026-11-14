@@ -38,6 +38,22 @@ When multiple algorithms are enabled, it will still default to Argon2 for
 `generate_hash`, but will be able to verify password hashes from PBKDF2 and
 scrypt as well, if you have them in your password database.
 
+## Verification policies
+
+For callers that need control over which algorithms and parameter costs are
+accepted, [`verify_password_with_policy`] verifies a hash against a
+[`VerifyPolicy`]. The policy is evaluated immediately after the PHC hash string
+is parsed and before any password hashing computation runs, so unknown
+algorithms, disabled algorithms, and oversized (including maliciously large)
+parameters never reach the underlying Argon2, PBKDF2, or scrypt
+implementations.
+
+Each condition produces a distinct [`VerifyError`] variant
+(`UnknownAlgorithm`, `AlgorithmDisabled`, or `ParamsExceedLimit`). On success
+the function returns a [`VerifyOutcome`] containing the parsed
+[`HashAlgorithm`] and a `rehash_required` flag which indicates whether the hash
+should be rehashed via [`generate_hash`].
+
 ## SemVer Policy
 
 MSRV increases are not considered breaking changes and can happen in patch releases.

@@ -43,6 +43,18 @@ pub enum VerifyError {
     /// Password hash parsing errors.
     Parse(ParseError),
 
+    /// Algorithm used by the hash is unknown, or a known algorithm whose crate feature is not
+    /// enabled.
+    UnknownAlgorithm,
+
+    /// Algorithm used by the hash is known and enabled, but explicitly disabled by the configured
+    /// verification policy.
+    AlgorithmDisabled,
+
+    /// Algorithm is allowed, but one or more of its parameters could not be parsed or exceed the
+    /// cost limits of the configured verification policy.
+    ParamsExceedLimit,
+
     /// Password is invalid.
     PasswordInvalid,
 }
@@ -51,6 +63,11 @@ impl fmt::Display for VerifyError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Parse(err) => write!(f, "{err}"),
+            Self::UnknownAlgorithm => write!(f, "unknown or unsupported password hash algorithm"),
+            Self::AlgorithmDisabled => write!(f, "password hash algorithm is disabled by policy"),
+            Self::ParamsExceedLimit => {
+                write!(f, "password hash parameters exceed the policy limits")
+            }
             Self::PasswordInvalid => write!(f, "password is invalid"),
         }
     }

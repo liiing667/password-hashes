@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Added
+- `VerifyPolicy`/`verify_password_with_policy` for configurable allowed-algorithm and
+  per-algorithm cost-limit enforcement, with distinguishable `VerifyError` variants for unknown
+  algorithms, disabled algorithms, and parameters exceeding the limits
+- `VerifyOutcome`, `HashAlgorithm`, `Argon2Limits`, `Pbkdf2Limits`, and `ScryptLimits`
+- Policy checks run before any Argon2/PBKDF2/scrypt computation so maliciously oversized
+  parameters cannot reach the underlying implementations
+
 ## 2.0.0 (2026-11-04)
 ### Changed
 - Upgrade to the Rust 2024 edition and bump MSRV to 1.85 ([#563])
